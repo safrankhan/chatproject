@@ -1,0 +1,6 @@
+properties {  
+ Name= ;
+ Gender=  ;
+ surname= ;
+ mobile= ;
+  }

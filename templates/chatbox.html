@@ -1,0 +1,176 @@
+{% extends 'main.html' %}
+
+{% block title %}My Bots: ChatBot+{% endblock %}
+
+{% block upper %}
+
+{% endblock %}
+
+{% block content %}
+
+{% for x in data1 %}
+<div class="bg-secondary " style="padding: 6px 20px; position: sticky; ">
+	<span><a href="/media/{{x.img}}"><img src="/media/{{x.img}}" class="thumb-sm img-circle bx-s" /></a></span>
+	<strong style="padding: 10px; color: black;">{{x.botName}}</strong>
+	<strong style="padding: 6px 6px 6px 0px; float: left;"><a href="/index/" class="fa fa-arrow-left"></a></strong>
+</div>
+{% endfor %}
+
+<div class="row"  >
+
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " >
+
+		<!-- Chat -->
+		<div class="portlet" id="chat" >
+			<!-- /primary heading -->
+			<div id="portlet-3" class="panel-collapse collapse in" >
+				<div class="portlet-body" style=" background-image: url(/static/img/3.jpg); background-repeat:no-repeat; background-size:cover; height: 70vh; opacity: 0.8;">
+					<div class="chat-conversation" >
+						<ul class="conversation-list nicescroll" style="height: 60vh;">
+
+						</ul>
+						
+					</div>
+				</div>
+				<div class="row" style="color: brown;">
+					<div class="col-md-10 col-lg-11 col-sm-10 col-xs-9 chat-inputbar">
+						<input type="text" id="chattext" class="form-control  chat-input"
+							placeholder="Enter your text " autocomplete="off" autofocus
+							style="border-radius:30px;height: 43px; background-color:#f5f9fa; font-size: 17px;  box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);">
+						{{ instance.my_text_field|safe }}
+					</div>
+					<div class="col-md-2 col-lg-1 col-sm-2 col-xs-3 chat-send">
+						<button type="submit" id="sendbutton" class="btn btn-info" disabled
+							style="padding: 9px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);"><i
+								class="fa fa-paper-plane"></i></button>
+					</div>
+				</div> 
+			</div>
+		</div>
+	</div> <!-- end Chat -->
+</div> 
+<!-- </div> -->
+<!-- Chat -->
+
+<div class="row">
+	<div id="morris-bar-example" style="height: 2000px; display:none;"></div>
+	<div id="morris-line-example" style="height: 200px; display:none;"></div>
+</div> 
+
+<!-- </section> -->
+
+{%endblock%}
+{%block script%}
+
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/modernizr.min.js"></script>
+<script src="/static/js/pace.min.js"></script>
+<script src="/static/js/wow.min.js"></script>
+<script src="/static/js/jquery.scrollTo.min.js"></script>
+<script src="/static/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="/static/assets/chat/moment-2.2.1.js"></script>
+<script src='/static/assets/chat/responsivevoice.js'></script>
+
+<!--Morris Chart-->
+<script src="/static/assets/morris/morris.min.js"></script>
+<script src="/static/assets/morris/raphael.min.js"></script>
+
+<!-- Chat -->
+<script>
+	var responseid = 1;
+	var previousrply = "";
+	!function ($) {
+		"use strict";
+
+		var ChatApp = function () {
+			this.$body = $("body"),
+				this.$chatInput = $('.chat-input'),
+				this.$chatList = $('.conversation-list'),
+				this.$chatSendBtn = $('.chat-send .btn')
+		};
+		$(document).ready(function () {
+			$('#chattext').keyup(function () {
+				var chatText = $(this).val()
+				if (chatText == '') {
+					$('#sendbutton').attr('disabled', true);
+				}
+				else {
+					$('#sendbutton').attr('disabled', false)
+				}
+			});
+		});
+		//saves chat entry - You should send ajax call to server in order to save chat enrty
+		ChatApp.prototype.save = function () {
+			var chatText = this.$chatInput.val();
+			var chatTime = moment().format("h:mm");
+			var responseText = "Default Message";
+			if (chatText != '') {
+
+
+
+
+				$('<li class="clearfix odd "><div class="conversation-text"><div class="ctext-wrap"><p style="word-wrap:break-word;max-width:200px;text-align:left; font-size:17px ">' + (chatText) + '</p><span>' + chatTime + '</span></div></div></li>').appendTo('.conversation-list');
+				// ajax starts
+				$.ajax({
+					// type: "POST",  //method
+					url: '/ajax/chatbotinput/',
+					data: {
+						'username': chatText
+					},
+					success: function (data) {
+						if (data.length == 0){
+							$('#bot_properties' + (responseid - 1).toString()).html('typing...')}
+						else{
+							$('#bot_properties' + (responseid - 1).toString()).html(data);
+							// responsiveVoice.speak(data);
+							previousrply = data;}
+					},
+				});
+				$('<li class="clearfix "><div class="conversation-text"><div class="ctext-wrap"><p><span id="bot_properties' + responseid.toString() + '" style="font-size:17px"><i>Typing...</i></span></p><span>' + chatTime + '</span></div></div></li>').appendTo('.conversation-list');
+
+				this.$chatInput.val('');
+				this.$chatInput.focus();
+				this.$chatList.scrollTo('100%', '100%', {
+					easing: 'swing'
+				});
+				responseid++;
+			}
+		}
+
+		ChatApp.prototype.init = function () {
+			var $this = this;
+			//binding keypress event on chat input box - on enter we are adding the chat into chat list -
+			$this.$chatInput.keypress(function (ev) {
+				var p = ev.which;
+				if (p == 13) {
+					$this.save();
+					return false;
+				}
+			});
+
+
+			//binding send button click
+			$this.$chatSendBtn.click(function (ev) {
+				$this.save();
+				return false;
+			});
+		},
+			//init ChatApp
+			$.ChatApp = new ChatApp, $.ChatApp.Constructor = ChatApp
+
+	}(window.jQuery);
+</script>
+
+<!-- sweet alerts -->
+<script src="/static/assets/sweet-alert/sweet-alert.min.js"></script>
+<script src="/static/assets/sweet-alert/sweet-alert.init.js"></script>
+
+<!-- Dashboard -->
+<script src="/static/js/jquery.dashboard.js"></script>
+<script src="/static/js/jquery.app.js"></script>
+
+
+{%endblock%}

@@ -1,0 +1,51 @@
+{%extends 'main.html'%}
+
+{%block title%}Upload AIML: ChatBot+{%endblock%}
+{% block upper%}
+       {% endblock%}
+
+{% block content %}
+<!-- Page Content Start -->
+        <!-- ================== -->
+        <!-- Page Content Start -->
+            <!-- ================== -->
+
+            <div class="wraper container-fluid">
+                <div class="page-title"> 
+                    <h3 class="title">Upload AIML Files</h3> 
+					<span style="float:right"> Select Bot: <select id="botlist" onchange="load_files()" >
+					  <option value=''>Not Selected</option><option value='xaseNPBI2Vc2nLMK'>Adv. Ghatte</option><option value='hYGoYSZldL0dJpDT'>Hike Natasha</option><option value='LGnFSX5S279VSdSf'>Saqib Ghatte</option><option value='QbWtwTkxyE8KOiy1'>Hertzsoft</option><option value='vl2RkhLQ8cQ5JyfK'>Kalsekar Technical Campus</option>					  </select>
+					</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 portlets">
+                        <!-- Your awesome content goes here -->		
+						<div class="m-b-30">
+                              <form method="post" action="uploadaimlfile.html" class="dropzone" id="dropzone" enctype="multipart/form-data">
+							   <div class="fallback">					
+                                
+							    </div>	
+								<input name="file[]" type="file" multiple accept=".aiml,.properties"/>
+										
+								<div style="clear:both;"><button type = "submit" name="uploadall" class="btn btn-success"><i class="fa fa-cloud-upload"></i> &nbsp;Upload All Files</button></div>
+							  </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {%endblock%}
+    {%block script%}
+    <script src="/static/js/jquery.app.js"></script>
+
+        <!-- Page Specific JS Libraries -->
+        <script src="/static/assets/dropzone/dropzone.min.js"></script>
+		
+		<script>
+		function load_files()
+		{
+			window.location.href = 'uploadaiml.html?botid=' + document.getElementById("botlist").value;
+		}
+		</script>
+		
+    {%endblock%}

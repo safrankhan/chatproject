@@ -1,0 +1,8 @@
+<category>
+        <pattern>LOAD AIML B</pattern>
+        <template>
+            <!-- Load standard AIML set -->
+            <learn>standard/reduction0.safe.aiml</learn>
+     </template>
+    </category>
+</aiml>

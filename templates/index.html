@@ -1,0 +1,180 @@
+{% extends 'main.html' %}
+
+{% block title %}My Bots: ChatBot+{% endblock %}
+
+{% block upper %}
+
+{% endblock %}
+
+{% block content %}
+<!-- Page Content Start -->
+<!-- ================== -->
+
+<div class="wraper container-fluid">
+    <div class="page-title">
+
+        <h3 class="title"> My Chat Bots </h3>
+    </div>
+    <div class="row">
+
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-body p-t-0">
+                        <div class="input-group">
+                            <input type="text" id="example-input1-group2" name="lsearch" class="form-control"
+                                placeholder="Search My Bots..." autocomplete="off">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-effect-ripple btn-primary"><i
+                                        class="fa fa-search"></i></button>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <span style="float:right;"><button onclick="window.location.assign('/addbot/');"
+            class="btn btn-lg btn-success btn-rounded m-b-5" data-toggle="tooltip" data-placement="left"
+            data-original-title="New Bot"> <i class="ion-android-add-contact"></i> </button></span>
+</div> <!-- End row -->
+<div class="row">
+    {% for x in data1 %}
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 hiddenbot">
+            <div class="panel">
+                <div class="panel-body p-t-10">
+                    <div class="media-main">
+                        <a class="pull-left" href="/media/{{x.img}}">
+                            <img class="thumb-lg img-circle bx-s" src="/media/{{x.img}}" alt="Profile Picture">
+                        </a>
+                        <div class="pull-right btn-group-sm">
+                            <a href="/editaiml?username={{x.userName}}" class="btn btn-success tooltips"
+                                data-placement="top" data-toggle="tooltip" data-original-title="Edit">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <button class="btn btn-danger tooltips" data-placement="top" data-toggle="tooltip"
+                                data-original-title="Delete" id="sa-delete-{{x.pk}}">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+                        <div class="info">
+                            <h4 style="color: rgb(5, 5, 5);">  {{x.botName}} </h4>
+                            <p class="username" style="color: rgb(4, 107, 4);"> <strong>User Name: {{x.userName}} </strong></p>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <hr />
+                    <ul class="social-links list-inline p-b-10">
+                        <button class="btn btn-success" id="sa-desc-{{x.pk}}"><i class="fa fa-bars" aria-hidden="true"></i>
+                            &nbsp;View Description</button>
+                            <a href="/chatbot/{{x.id}}" class="btn btn-primary btn-chat"> 
+                                <i class="fa fa-comments">&nbsp;Chat Now</i>
+                            </a>
+                    </ul>
+                    
+                </div> <!-- panel-body -->
+            </div> <!-- panel -->
+        </div> <!-- end col -->
+    {% endfor %}
+</div> <!-- End row -->
+</div> <!-- END Wraper -->
+{% endblock %}
+
+{% block script %}
+<!-- Chat -->
+<script src="/static/js/jquery.chat.js"></script>
+<script src="/static/assets/chat/moment-2.2.1.js"></script>
+<script src="/static/assets/chat/popup-box.js"></script>
+
+<!-- Dashboard -->
+<script src="/static/js/jquery.dashboard.js"></script>
+
+<script src="/static/js/jquery.app.js"></script>
+
+<!-- sweet alerts -->
+<script src="/static/assets/sweet-alert/sweet-alert.min.js"></script>
+
+<script>
+    !function ($) {
+        "use strict";
+
+        var SweetAlert = function () { };
+
+        //examples 
+        SweetAlert.prototype.init = function () {
+            {% for x in data1 %}
+
+            //Parameter
+            $('#sa-delete-{{x.pk}}').click(function () {
+                swal({
+                    title: "Are you sure?",
+                    text: "{{x.userName}} \n\n All your files and properties of this bot will be deleted.",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel plx!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        swal("Deleted!", '{{x.userName}}', "success");
+                        window.location.href = "delete/{{x.pk}}"
+                    } else {
+                        swal("Cancelled", "Your bot is safe :)", "error");
+                    }
+                });
+            });
+            // Bot Description
+            $('#sa-desc-{{x.pk}}').click(function () {
+                swal({
+                    title: "{{x.userName}}",
+                    text: " {{x.desc}}",
+                    imageUrl: "/media/{{x.img}}"
+                });
+            });
+            {% endfor %}
+        },
+            //init
+            $.SweetAlert = new SweetAlert, $.SweetAlert.Constructor = SweetAlert
+        }(window.jQuery),
+
+            //initializing 
+            function ($) {
+                "use strict";
+                $.SweetAlert.init()
+            }(window.jQuery);
+
+       
+
+</script>
+<script>
+
+    jQuery(document).ready(function($){
+    
+    $('.username').each(function(){
+    $(this).attr('data-search-term', $(this).text().toLowerCase());
+    });
+    
+    $('#example-input1-group2').on('keyup', function(){
+    
+    var searchTerm = $(this).val().toLowerCase();
+    
+        $('.username').each(function(){
+    
+            if ($(this).filter('[data-search-term *= ' + searchTerm + ']').length > 0 || searchTerm.length < 1) {
+                $(this).closest(".hiddenbot").show();
+            } else {
+                $(this).closest(".hiddenbot").hide();
+            }
+    
+        }); 
+    
+    });
+    
+    }); 
+    
+    </script>
+
+{% endblock %}
+
+
+<!-- {% block username %} {{x.user_name}} {% endblock %} -->

@@ -1,0 +1,126 @@
+{% extends 'main.html' %}
+
+{% block title %}My Bots:Profile+{% endblock %}
+
+{% block upper %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    body{
+        background-image: url('/static/img/img.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    h2, h1{
+        color: black;
+        font-weight:bolder;
+    }
+    #card {
+        position: relative;
+        box-shadow: 3px 4px 8px 3px rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+    }
+    .fname{
+        position: absolute;
+        top: 5%;
+        left: 30%;
+        font-size: 100px;
+        color: white;
+    }
+    .lname{
+        position: absolute;
+        top: 5%;
+        left: 50%;
+        font-size: 100px;
+        color: white;
+
+
+    }
+
+    #title {
+        color: rgb(14, 13, 13);
+        font-size: 18px;
+    }
+
+    #btn_pro {
+        border: none;
+        outline: 0;
+        display: inline-block;
+        padding: 8px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    #pro_1 a {
+        text-decoration: none;
+        font-size: 22px;
+        color: black;
+    }
+
+    #btn_pro:hover,
+    #pro_1 a:hover {
+        opacity: 0.7;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<!-- Page Content Start -->
+<!-- ================== -->
+
+<!-- <div class="wraper container-fluid">
+    <div class="page-title">
+        <h3 class="title"> My Profile </h3>
+    </div>
+    <div class="row">      
+        <div class="col-lg-8">
+
+            </div>
+        </div>
+    </div>
+    <br>
+    
+</div> 
+</div> -->
+<div id="pro">
+<h2 style="text-align:center" >User Profile</h2>
+<div class="card" id="card">
+    {% for x in data %}
+    <img src="/static/img/profilebg1.jpg" alt="John" style="width:100%; height: 30vh;">
+    <div class="fname">{{fname}}</div>
+    <div class="lname">{{lname}}</div>
+    <h1>{{x.user_name }} {{x.user_last}}</h1>
+
+    <p class="title" id="title">You Have Created {{count}} ChatBot</p>
+    <div class="edit" style="margin-bottom:18px">
+    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: black;" ></i><a href="/editintro/{{x.id}}/" style="color: black; font-size: 16px; font-weight: bold; ">Edit Intro</a>
+    </div>
+    <p><button id="btn_pro" ><a href="" style="color: white;">Change Password</a> </button></p>
+    {% endfor %}
+</div>
+</div>
+<script>
+    
+</script>
+
+{% endblock %}
+
+{% block script %}
+
+<!-- Dashboard -->
+<script src="/static/js/jquery.dashboard.js"></script>
+
+<script src="/static/js/jquery.app.js"></script>
+
+<!-- sweet alerts -->
+<script src="/static/assets/sweet-alert/sweet-alert.min.js"></script>
+
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{%extends 'main.html'%}
+
+    {%block title%}Download AIML: ChatBot+{%endblock%}
+    {% block upper%}
+           {% endblock%}
+
+    {% block content %}
+    <!-- Page Content Start -->
+            <!-- ================== -->
+
+            <div class="wraper container-fluid">
+                <div class="page-title"> 
+                    <h3 class="title">Download AIML Files</h3>
+					<span style="float:right"> Select Bot: <select id="botlist" onchange="load_files()" >
+					  <option value=''>Not Selected</option><option value='xaseNPBI2Vc2nLMK'>Adv. Ghatte</option><option value='hYGoYSZldL0dJpDT'>Hike Natasha</option><option value='LGnFSX5S279VSdSf'>Saqib Ghatte</option><option value='QbWtwTkxyE8KOiy1'>Hertzsoft</option><option value='vl2RkhLQ8cQ5JyfK'>Kalsekar Technical Campus</option>					</select>
+					</span>
+                </div>
+
+                <div class="row">
+                    <i><b>Error:</b> Please select a bot</i>
+					</table>
+                </div>
+            </div>
+
+				  
+        {%endblock%}
+        {%block script%}
+        <script>
+            function load_files()
+            {
+                window.location.href = 'downloadaiml.html?botid=' + document.getElementById("botlist").value;
+            }
+            </script>
+        {%endblock%}

@@ -1,0 +1,212 @@
+{%extends 'main.html'%}
+
+{%block title%}Edit AIML: ChatBot+{%endblock%}
+{% block upper%}
+{% endblock%}
+
+{% block content %}
+<!-- Page Content Start -->
+<!-- ================== -->
+<!-- Page Content Start -->
+<!-- ================== -->
+
+<div class="wraper container-fluid">
+	<div class="page-title">
+		<h3 class="title ">Edit AIML</h3>
+		<span style="float:right"> Select Bot: <select id="botlist" onchange="load_files()">
+				<option value=''>Not Selected</option>
+				{% for x in data1 %}
+				<option value='{{x.userName}}'>{{x.botName}}</option>
+				{% endfor %}
+				<script>document.getElementById('botlist').value = '{{path}}';</script>
+			</select>
+		</span>
+	</div>
+	<a href=" " download class="btn btn-info " id="download" style="margin:4px;">
+		<li class="fa fa-download" style="color: white;"></li>
+	</a>
+	<a href=" " class="btn btn-danger " id="close" style="margin:4px;">
+		<li class="fa fa-trash" style="color: white;"></li>
+	</a>
+	<button id="new_file" class=" btn btn-primary " style="margin:4px;">
+		<li class="fa fa-file-code-o" style="color: white;">&nbsp;New File</li>
+	</button>
+	<div class="row">
+		<div class="col-md-2 col-lg-2 col-sm-2">
+			<strong>Select File:</strong><br>
+			<select name="files" size='14' id="files" style="width: 100%;" onchange="load_file()">
+				{% for x in filename  %}
+				<option value="{{x}}" class=" btn-danger bg-danger " style="border: 1px solid black; margin-top: 2px;;">
+					{{x}}</option>
+				{% endfor %}
+			</select>
+			<div class="m-t-0">
+				<form method="post" class="dropzone" id="dropzone" enctype="multipart/form-data"
+					action="/uploadaimlfile/{{path}}/"> {% csrf_token %}
+
+					<input name="uploadfile" type="file" id="filebtn" multiple accept=".aiml,.properties" />
+
+					<div><button type="submit" id="aiml_btn" name="uploadall" class="btn btn-success"><i
+								class="fa fa-cloud-upload"></i>
+							&nbsp;Upload All Files</button></div>
+				</form>
+			</div>
+
+		</div> <!-- end col -->
+
+		<div class="col-md-10 col-lg-10 col-sm-10">
+			<strong>Edit File:</strong> <strong type="text" id="file" style="color: black;margin:4px;"> </strong> <span
+				id="already">
+
+			</span>
+			<button class=" btn-primary " id="edit_file" style="margin:px;">
+				<li class="fa fa-edit" style="color: white;">&nbsp;Rename</li>
+			</button>
+			<button class="btn-success " id="save_file" style="margin:px;">
+				<li class="fa fa-save" style="color: white;"></li>
+			</button>
+			<form method="post"> {% csrf_token %}
+				<textarea id="code" name="code" style="width:100%;display: none;"> </textarea>
+				<span class="btn btn-danger " style="float: right; margin-top: 10px;"><a href="/index/"
+						style="color: blanchedalmond;" class="fa fa-times">&nbsp;Close</a></span>
+				<button type="submit" class="btn btn-success " id="submit"
+					style="float: right; margin-top: 10px; margin-right:4px;">
+					<li class="fa fa-floppy-o">&nbsp;&nbsp;Save</li>
+				</button>
+
+			</form>
+		</div> <!-- end col -->
+	</div> <!-- End row -->
+
+</div> <!-- END Wraper -->
+
+{%endblock%}
+{%block script%}
+<script src="/static/js/jquery.app.js"></script>
+
+<!--CodeMirror initialization-->
+<script src="/static/assets/codemirror/codemirror.js.download"></script>
+<script src="/static/assets/codemirror/show-hint.js.download"></script>
+<script src="/static/assets/codemirror/xml-hint.js.download"></script>
+<script src="/static/assets/codemirror/xml.js.download"></script>
+<script src="/static/assets/codemirror/aimleditor.js"></script>
+<script src="jquery.multiple.select.js"></script>
+
+<script>
+	function load_files() {
+		window.location.href = '/editaiml?username=' + document.getElementById("botlist").value;
+	}
+
+	{
+		$(document).ready(function () {
+			$('#files').change(function () {
+				var val1 = $(this).val()
+				$('#file').text($('#files').val())
+				editor.setValue(' ');
+
+				$('#copy').replaceWith('<strong type="text"  id="file" style="color: black;margin:4px;">' + val1 + ' </strong>')
+				$.ajax({
+					url: '/filevalue/',
+					data: { file: '{{path}}/' + val1 },
+					success: function (data1) {
+						editor.setValue(data1);
+						editor.refresh();
+					},
+				})
+			})
+		})
+		$(document).ready(function () {
+			$('#submit').click(function () {
+				var val = $('#files').val()
+				var file = $('#copy').val()
+				var mir = editor.getValue()
+				$.ajax({
+					url: '/form/submission/{{path}}/' + val + '/',
+					data: { value: mir, rename: file },
+				})
+			})
+		})
+		$(document).ready(function () {
+			$('#download').hide()
+			$('#close').hide()
+			$('#files').change(function () {
+				$('#download').show()
+				$('#close').show()
+				var val1 = $(this).val();
+				$('#download').attr('href', '/media/{{path}}/' + val1);
+				$('#close').attr('href', '/filedelete/{{path}}/' + val1);
+			})
+		});
+		$(document).ready(function () {
+			$('#edit_file').click(function () {
+				var val = $('#files').val()
+				$('#file').replaceWith('<input type="text" value="' + val + '"  style="color:black;width:7vw; border: 1px solid black; margin:4px; padding:1px;" id="copy" >')
+				$('#copy').keyup(function () {
+					var existfile = $(this).val()
+					$.ajax({
+						url: '/filename/check/{{path}}/',
+						data: { check_rename: existfile },
+						success: function (data) {
+							if (data == 'yes') {
+								$('#already').html('* A file already exist at this location')
+								$('#already').css('color', 'red')
+								$('#already').show()
+							}
+							else {
+								$('#already').hide()
+							}
+						}
+					})
+				})
+			});
+			$('#save_file').click(function () {
+				var val = $('#files').val()
+				var file = $('#copy').val()
+				$.ajax({
+					url: '/save/rename_file/{{path}}/' + val + '/',
+					data: { rename: file, },
+					success: function (data) {
+						$('#copy').replaceWith('<strong type="text"  id="file" style="color: black;margin:4px;">' + data + ' </strong>');
+						$('#files option[value="' + val + '"]').replaceWith('<option value="' + data + '" class=" btn-danger bg-danger " style="border: 1px solid black; margin-top: 2px;;">' + data + '</option>')
+
+					}
+
+				})
+			})
+		})
+
+		$(document).ready(function () {
+			no = 0
+			$('#new_file').click(function () {
+				$.ajax({
+					url: '/ajax/newfile/{{path}}/',
+					data: { name: no },
+					datatype: 'json',
+					success: function (data) {
+						var x = JSON.parse(data);
+						// var num = (x.no==0)? "untitled" : x.no;
+						if (x.data) {
+							$('#copy').replaceWith('<strong type="text"  id="file" style="color: black;margin:4px;">' + 'untitled' + x.no + ' </strong>')
+							$('#files').append($('<option  class=" btn-danger bg-danger " style="border: 1px solid black; margin-top: 2px;;"></option>').attr('value', 'untitled' + (x.no)).text('untitled' + x.no));
+							$('#file').text('untitled' + x.no)
+							$('#files option:last-child').attr('selected', 'selected')
+							editor.setValue('');
+							no = x.no
+							no++
+						}
+						else {
+							$('#copy').replaceWith('<strong type="text"  id="file" style="color: black;margin:4px;">' + x.file + ' </strong>')
+							$('#files').append($('<option  class=" btn-danger bg-danger " style="border: 1px solid black; margin-top: 2px;;"></option>').attr('value', (x.file)).text(x.file));
+							$('#file').text(x.file)
+							$('#files option:last-child').attr('selected', 'selected')
+							editor.setValue('');
+							no++
+						}
+					}
+				})
+			});
+		});
+	}
+</script>
+
+{%endblock%}

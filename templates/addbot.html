@@ -1,0 +1,186 @@
+{%extends 'main.html'%}
+
+{%block title%}Add Bots: ChatBot+{%endblock%}
+{% block upper%}
+<script src="/static/js/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#UserName").keyup(function () {
+            var username = $(this).val();
+
+            $.ajax({
+                // type: "POST",  //method
+                url: '/ajax/validate_username/',
+                data: {
+                    'username': username
+                },  
+                // dataType: 'json',
+                success: function (data) {
+                    if (data == 'True') {
+                        // document.getElementById('error').innerHTML='* A user with this username already exists.'
+                        $('#error').html('* A user with this username already exists.')
+                        $('#error').css('color', 'red')
+                        $('#error').show()
+                    }
+                    else {
+                        $('#error').hide()
+                    }
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name=template]").change(function () {
+            var value = $("input[name=template]:checked").val();
+            //ajax starts
+            $.ajax({
+                // type: "POST",  //method  
+                url: "/addbot/fetchProperties/", //target file
+                data: { template: value }, //data need to be send 
+                success: function (data) {
+                    $('.bot_properties').html(data);
+                },
+            });
+        });
+    });
+</script>
+
+{% endblock%}
+
+{% block content %}
+
+
+<!-- Page Content Start -->
+<!-- ================== -->
+
+<div class="wraper container-fluid">
+    <div class="page-title">
+        <h3 class="title">Add New Bot </h3>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i>A Long Journey Within 4 Steps! &nbsp;&nbsp;<i
+                                class="fa fa-smile-o"></i></i></h3>
+                </div>
+                <div class="panel-body">
+                    <form id="wizard-validation-form" method="post" enctype="multipart/form-data"> {% csrf_token %}
+                        <div>
+                            <h3>Personal Details</h3>
+                            <section>
+
+                                <div class="col-sm-3" style="margin-top: 50px">
+                                    <div class="picture-container">
+                                        <div class="picture">
+                                            <img src="/static/img/default-avatar.png" class="img-responsive"
+                                                id="wizardPicturePreview"  title="" name='farhanpic'/>
+                                            <input type="file" name="profilePic"
+                                                accept="image/png,image/jpeg,image/jpg" id="wizard-picture" required >
+                                        </div>
+                                        <h6>Choose Picture </h6>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9" style="margin-top: 50px">
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-2 control-label " for="UserName">User Name *</label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="required" name="UserName" id="UserName"> <span
+                                                id="error"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-2 control-label " for="botname">Bot Name *</label>
+                                        <div class="col-lg-10">
+                                            <input class="required form-control" id="botname" name="botname"
+                                                type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-2 control-label " for="botDescription"> Description</label>
+                                        <div class="col-lg-10">
+                                            <textarea id="botDescription" name="botDescription" type="text"
+                                                placeholder="Describe Your Bot within few words..."
+                                                class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-12 control-label ">(*) Mandatory</label>
+                                    </div>
+                            </section>
+                            <h3>Select Template</h3>
+                            <section>
+                                <div class="wraper container-fluid">
+                                    <div class="row">
+                                        {% for x in template %}
+                                            <div class="col-lg-4" style="box-sizing: border-box;">
+                                            <div class="panel panel-color panel-success">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">{{x.templateName}}</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <label class="cr-styled">
+                                                        <p >{{x.desc}}</p>
+                                                        <input type="radio" id="{{x.pk}}" value="{{x.pk}}"
+                                                            name="template" required checked>
+                                                        <i class="fa"></i>
+                                                        Select this Template
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div> <!-- END Wraper -->
+                            </section>
+
+                            <h3>Edit Properties</h3>
+                            <section>
+                                <div class="form-group clearfix bot_properties">
+
+                                </div>
+                            </section>
+                            <h3>Step Final</h3>
+                            <section>
+                                <div class="form-group clearfix">
+                                    <div class="col-lg-12">
+                                        <textarea style="width:100%" rows="8" disabled>TERMS AND CONDITIONS</textarea>
+                                        <input id="acceptTerms-2" name="acceptTerms2" type="checkbox" class="required">
+                                        <label for="acceptTerms-2">I agree with the Terms and Conditions.</label>
+                                    </div>
+                                </div>
+                        </div>
+                        </section>
+                </div>
+                </form>
+            </div> <!-- End panel-body -->
+        </div> <!-- End panel -->
+
+    </div> <!-- end col -->
+
+</div> <!-- End row -->
+
+
+</div> <!-- END Wraper -->
+{% endblock %}
+{% block script %}
+<!--Form Validation-->
+<script src="/static/assets/form-wizard/bootstrap-validator.min.js" type="text/javascript"></script>
+
+<!--Form Wizard-->
+<script src="/static/assets/form-wizard/jquery.steps.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/static/assets/jquery.validate/jquery.validate.min.js"></script>
+
+<!--wizard initialization-->
+<script src="/static/assets/form-wizard/wizard-init.js" type="text/javascript"></script>
+<script src="/static/assets/form-wizard/jquery.steps.min.js" type="text/javascript"></script>
+
+<script src="/static/js/jquery.app.js"></script>
+
+
+{% endblock %}

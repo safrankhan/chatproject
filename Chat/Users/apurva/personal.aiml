@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><aiml version="1.0">
+<category>
+<pattern>DO YOU KNOW MY NAME</pattern>
+<template>Yes. you are apurva</template> 
+ </category> 
+ </aiml>
